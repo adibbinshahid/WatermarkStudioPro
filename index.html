@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WatermarkStudio PRO · by Adib</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%237c6aff'/%3E%3Cstop offset='55%25' stop-color='%23a594f9'/%3E%3Cstop offset='100%25' stop-color='%232dd4bf'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='url(%23g)'/%3E%3Crect x='4' y='4' width='24' height='24' rx='5' fill='rgba(255,255,255,0.12)'/%3E%3Cpath d='M8 16h16M8 11h9M8 21h12' stroke='white' stroke-width='2.5' stroke-linecap='round'/%3E%3Ccircle cx='22' cy='10' r='2.5' fill='white' opacity='.95'/%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@700;800;900&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0b0b12;--s1:#13131e;--s2:#1a1a28;--s3:#222232;--s4:#2c2c40;
+  --b1:rgba(255,255,255,0.06);--b2:rgba(255,255,255,0.11);--b3:rgba(255,255,255,0.20);
+  --t1:#f0ecff;--t2:#8e8ab0;--t3:#4e4b6a;
+  --ac:#7c6aff;--ac2:#a594f9;--acg:rgba(124,106,255,0.25);--acb:rgba(124,106,255,0.10);
+  --tl:#2dd4bf;--tlb:rgba(45,212,191,0.10);
+  --rd:#f87171;
+  --r:10px;--rs:7px;--rxs:5px;--sw:296px;
+}
+.light{
+  --bg:#edeaf8;--s1:#fff;--s2:#ebe8ff;--s3:#ddd9ff;--s4:#ccc7fa;
+  --b1:rgba(80,60,220,0.08);--b2:rgba(80,60,220,0.16);--b3:rgba(80,60,220,0.28);
+  --t1:#0c0b18;--t2:#3d3870;--t3:#8078b8;
+  --ac:#5b45f0;--ac2:#7c6aff;--acg:rgba(91,69,240,0.20);--acb:rgba(91,69,240,0.09);
+  --tl:#0d9488;--tlb:rgba(13,148,136,0.09);
+  --rd:#dc2626;
+}
+html,body{height:100%;font-family:'DM Sans',sans-serif;font-size:13px;background:var(--bg);color:var(--t1);overflow:hidden;transition:background .3s,color .3s}
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-thumb{background:var(--b3);border-radius:3px}
+
+.shell{display:grid;grid-template-columns:var(--sw) 1fr;grid-template-rows:52px 1fr;height:100vh}
+
+/* HEADER */
+.hdr{grid-column:1/-1;display:flex;align-items:center;padding:0 16px;gap:10px;background:var(--s1);border-bottom:1px solid var(--b2);z-index:20;transition:background .3s,border-color .3s}
+.logo-mark{width:32px;height:32px;border-radius:9px;flex-shrink:0;background:linear-gradient(135deg,#7c6aff,#a594f9 55%,#2dd4bf);display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 1px rgba(124,106,255,.35),0 4px 14px rgba(124,106,255,.3)}
+.logo-mark svg{width:17px;height:17px}
+.logo-name{font-family:'Cabinet Grotesk',sans-serif;font-size:15px;font-weight:800;letter-spacing:-.4px;color:var(--t1)}
+.pro-pill{background:linear-gradient(135deg,#7c6aff,#2dd4bf);color:#fff;font-size:8px;font-weight:800;letter-spacing:1.2px;padding:2px 7px;border-radius:20px;text-transform:uppercase;margin-left:3px;vertical-align:middle;box-shadow:0 2px 8px rgba(124,106,255,.4)}
+.logo-by{font-size:9px;color:var(--t3);margin-top:1px}
+.hdr-r{margin-left:auto;display:flex;align-items:center;gap:7px}
+.dev{font-size:10px;color:var(--t3)}.dev b{color:var(--ac2);font-weight:500}
+.pill{background:var(--s2);border:1px solid var(--b2);border-radius:20px;padding:2px 10px;font-size:11px;font-weight:500;color:var(--t2)}
+.hbtn{height:28px;padding:0 11px;border-radius:var(--rs);border:1px solid var(--b2);background:var(--s2);color:var(--t2);font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;cursor:pointer;white-space:nowrap;transition:all .15s;display:flex;align-items:center;gap:5px}
+.hbtn:hover{background:var(--s3);border-color:var(--b3);color:var(--t1)}
+.hbtn.red{border-color:rgba(248,113,113,.2);color:var(--rd)}
+.hbtn.red:hover{background:rgba(248,113,113,.08);border-color:rgba(248,113,113,.35)}
+
+/* SIDEBAR */
+.sidebar{background:var(--s1);border-right:1px solid var(--b2);display:flex;flex-direction:column;overflow:hidden;transition:background .3s,border-color .3s}
+.sb-body{flex:1;overflow-y:auto;overflow-x:hidden;padding:10px}
+.sb-foot{padding:10px;border-top:1px solid var(--b2);background:var(--s1);display:flex;flex-direction:column;gap:6px;transition:background .3s,border-color .3s}
+
+/* ACCORDION */
+.acc{background:var(--s2);border:1px solid var(--b1);border-radius:var(--r);margin-bottom:8px;overflow:hidden;transition:background .3s,border-color .3s}
+.acc-hdr{padding:9px 12px;display:flex;align-items:center;gap:7px;cursor:pointer;user-select:none;border-bottom:1px solid transparent;transition:background .15s}
+.acc-hdr:hover{background:var(--s3)}
+.acc.open .acc-hdr{border-bottom-color:var(--b1)}
+.acc-ico{font-size:12px;line-height:1}
+.acc-ttl{font-family:'Cabinet Grotesk',sans-serif;font-size:10.5px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--t2);flex:1}
+.acc-arr{font-size:9px;color:var(--t3);transition:transform .22s}
+.acc.open .acc-arr{transform:rotate(180deg)}
+.acc-body{display:none;padding:12px;flex-direction:column;gap:10px}
+.acc.open .acc-body{display:flex;animation:slideIn .2s ease}
+@keyframes slideIn{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:none}}
+
+/* DROP ZONE */
+.dz{border:1.5px dashed var(--b3);border-radius:var(--rs);padding:18px 12px;text-align:center;cursor:pointer;position:relative;background:linear-gradient(135deg,var(--s3),rgba(124,106,255,.04));transition:all .2s}
+.dz:hover,.dz.over{border-color:var(--ac);background:var(--acb)}
+.dz input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.dz-ico{font-size:22px;margin-bottom:6px;display:block}
+.dz-t{font-size:12px;color:var(--t2)}.dz-t b{color:var(--t1);font-weight:500}
+.dz-sub{font-size:10px;color:var(--t3);margin-top:3px}
+
+/* FIELDS */
+.f{display:flex;flex-direction:column;gap:5px}
+.fl{font-size:10px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--t3);display:flex;justify-content:space-between;align-items:center}
+.fv{color:var(--t1);font-weight:700;font-size:11px;font-variant-numeric:tabular-nums;letter-spacing:0}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+hr.div{border:none;border-top:1px solid var(--b1);margin:2px 0}
+
+input[type=text],input[type=number],select{width:100%;background:var(--s3);border:1px solid var(--b2);border-radius:var(--rs);color:var(--t1);padding:7px 10px;font-family:'DM Sans',sans-serif;font-size:12px;outline:none;transition:border-color .18s,box-shadow .18s}
+input[type=text]:focus,input[type=number]:focus,select:focus{border-color:var(--ac);box-shadow:0 0 0 3px var(--acg)}
+input::placeholder{color:var(--t3)}
+select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='5'%3E%3Cpath d='M0 0l4.5 5L9 0z' fill='%23888'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 9px center;padding-right:26px;cursor:pointer}
+select option{background:var(--s3)}
+
+input[type=range]{-webkit-appearance:none;width:100%;height:3px;background:var(--s4);border-radius:2px;outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;border-radius:50%;background:var(--ac);cursor:pointer;border:2px solid var(--bg);box-shadow:0 0 0 1px var(--ac);transition:transform .12s}
+input[type=range]:hover::-webkit-slider-thumb{transform:scale(1.22)}
+
+/* COLORS */
+.cg{display:flex;flex-wrap:wrap;gap:5px}
+.csw{width:24px;height:24px;border-radius:5px;cursor:pointer;border:2px solid transparent;transition:all .15s;flex-shrink:0}
+.csw:hover{transform:scale(1.1)}
+.csw.active{border-color:var(--ac)!important;box-shadow:0 0 0 1px var(--ac),0 2px 8px var(--acg)}
+.cprow{display:flex;align-items:center;gap:8px;margin-top:3px}
+.cpwrap{width:34px;height:30px;border-radius:var(--rxs);border:1px solid var(--b2);overflow:hidden;position:relative;cursor:pointer;flex-shrink:0}
+.cpwrap input{position:absolute;inset:-4px;width:calc(100%+8px);height:calc(100%+8px);opacity:0;cursor:pointer}
+.cprev{width:100%;height:100%}
+
+.tag{font-size:9px;font-weight:700;letter-spacing:.5px;padding:1px 6px;border-radius:20px;text-transform:uppercase}
+.tg{background:var(--tlb);color:var(--tl);border:1px solid rgba(45,212,191,.2)}
+
+.folder-btn{display:flex;align-items:center;justify-content:center;gap:6px;padding:8px 12px;border-radius:var(--rs);border:1px solid rgba(124,106,255,.25);background:var(--acb);color:var(--ac2);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;width:100%;margin-top:6px}
+.folder-btn:hover{border-color:var(--ac);color:var(--ac)}
+.folder-info{font-size:10px;color:var(--tl);background:var(--tlb);border:1px solid rgba(45,212,191,.2);border-radius:var(--rxs);padding:5px 8px;margin-top:5px;display:none;line-height:1.5}
+
+/* BUTTONS */
+.btn{display:flex;align-items:center;justify-content:center;gap:5px;padding:9px 14px;border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;width:100%;border:1px solid var(--b2);background:var(--s2);color:var(--t2)}
+.btn:hover{background:var(--s3);border-color:var(--b3);color:var(--t1)}
+.btn-p{background:linear-gradient(135deg,#7c6aff,#6c54ff);color:#fff;border:none;font-weight:600;box-shadow:0 2px 14px rgba(124,106,255,0.55),0 0 0 1px rgba(124,106,255,0.3)}
+.btn-p:hover{background:linear-gradient(135deg,#8f7fff,#7c6aff);transform:translateY(-1px);box-shadow:0 6px 24px rgba(124,106,255,0.65),0 0 0 1px rgba(124,106,255,0.4)}
+.btn-p:disabled{opacity:.35;cursor:not-allowed;transform:none;box-shadow:none}
+.pg-wrap{height:3px;background:var(--s4);border-radius:2px;overflow:hidden;display:none}
+.pg-bar{height:100%;background:linear-gradient(90deg,var(--ac),var(--tl));border-radius:2px;transition:width .25s;width:0%}
+
+/* MAIN */
+.main{background:var(--bg);overflow-y:auto;padding:16px;transition:background .3s}
+.empty{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px}
+.empty-ico{font-size:44px;opacity:.2}
+.empty p{font-size:14px;color:var(--t2);font-weight:500}
+.empty small{font-size:12px;color:var(--t3)}
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px}
+
+/* CARD */
+.card{background:var(--s1);border:1px solid var(--b2);border-radius:var(--r);overflow:hidden;transition:border-color .2s,box-shadow .2s,transform .2s,background .3s;animation:cardIn .25s ease both}
+@keyframes cardIn{from{opacity:0;transform:scale(.94) translateY(8px)}to{opacity:1;transform:none}}
+.card:hover{border-color:var(--b3);box-shadow:0 6px 24px rgba(0,0,0,.2),0 0 0 1px rgba(124,106,255,.12);transform:translateY(-2px)}
+.card canvas{width:100%;display:block;height:auto}
+.card-foot{padding:7px 9px;display:flex;align-items:center;gap:5px}
+.cn{font-size:10px;color:var(--t3);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cb{font-size:8px;font-weight:700;letter-spacing:.5px;padding:1px 5px;border-radius:3px;background:var(--s2);color:var(--t3);border:1px solid var(--b1);text-transform:uppercase;flex-shrink:0}
+.crm{background:none;border:none;color:var(--t3);cursor:pointer;font-size:12px;padding:2px 5px;border-radius:4px;transition:all .15s}
+.crm:hover{color:var(--rd);background:rgba(248,113,113,.1)}
+
+/* TOAST */
+.toast{position:fixed;bottom:18px;right:18px;background:var(--s1);border:1px solid var(--b3);color:var(--t1);padding:9px 14px;border-radius:var(--rs);font-size:12px;z-index:9999;box-shadow:0 8px 30px rgba(0,0,0,.25);animation:tin .22s ease,tout .22s 2.6s ease forwards;pointer-events:none}
+@keyframes tin{from{transform:translateY(10px);opacity:0}to{transform:none;opacity:1}}
+@keyframes tout{to{opacity:0;transform:translateY(5px)}}
+</style>
+</head>
+<body>
+<div class="shell" id="shell">
+
+<header class="hdr">
+  <div class="logo-mark">
+    <svg viewBox="0 0 17 17" fill="none"><rect x="1.5" y="1.5" width="14" height="14" rx="3" fill="rgba(255,255,255,0.15)"/><path d="M4 8.5h9M4 5.5h5M4 11.5h6.5" stroke="white" stroke-width="1.6" stroke-linecap="round"/><circle cx="12.5" cy="5" r="1.5" fill="white" opacity=".9"/></svg>
+  </div>
+  <div>
+    <div class="logo-name">WatermarkStudio <span class="pro-pill">PRO</span></div>
+    <div class="logo-by">by Adib</div>
+  </div>
+  <div class="hdr-r">
+    <span class="dev">Developed by <b>Adib</b></span>
+    <span class="pill" id="counter">0 files</span>
+    <button class="hbtn red" id="clearBtn">✕ Clear All</button>
+    <button class="hbtn" id="resetBtn">↺ Reset</button>
+    <button class="hbtn" id="themeBtn">☀️ Light</button>
+  </div>
+</header>
+
+<aside class="sidebar">
+<div class="sb-body">
+
+  <div class="acc open" id="acc-upload">
+    <div class="acc-hdr" onclick="toggleAcc('acc-upload')"><span class="acc-ico">📂</span><span class="acc-ttl">Upload</span><span class="acc-arr">▾</span></div>
+    <div class="acc-body">
+      <div class="dz" id="dz">
+        <input type="file" id="fi" multiple accept="image/*,.pdf,.heic,.heif">
+        <span class="dz-ico">⬆</span>
+        <div class="dz-t"><b>Click or drag</b> files here</div>
+        <div class="dz-sub">JPG · PNG · WEBP · GIF · HEIC · PDF</div>
+      </div>
+      <button class="folder-btn" id="folderBtn">🗂 Upload Folder (with subfolders)</button>
+      <input type="file" id="folderInput" webkitdirectory multiple style="display:none">
+      <div class="folder-info" id="folderInfo"></div>
+    </div>
+  </div>
+
+  <div class="acc open" id="acc-text">
+    <div class="acc-hdr" onclick="toggleAcc('acc-text')"><span class="acc-ico">✏️</span><span class="acc-ttl">Watermark Text</span><span class="acc-arr">▾</span></div>
+    <div class="acc-body">
+      <div class="f"><div class="fl">Text</div><input type="text" id="wmText" value="© Sample by ADIB via Fiverr"></div>
+    </div>
+  </div>
+
+  <div class="acc open" id="acc-adj">
+    <div class="acc-hdr" onclick="toggleAcc('acc-adj')"><span class="acc-ico">🎛</span><span class="acc-ttl">Adjustments</span><span class="acc-arr">▾</span></div>
+    <div class="acc-body">
+
+      <div class="f">
+        <div class="fl">Color</div>
+        <div class="cg" id="cg"></div>
+        <div class="cprow">
+          <div class="cpwrap"><div class="cprev" id="cprev" style="background:#4b4b4b"></div><input type="color" id="wmColor" value="#4b4b4b"></div>
+          <span style="font-size:11px;color:var(--t3)">Custom color</span>
+        </div>
+      </div>
+
+      <hr class="div">
+
+      <div class="f">
+        <div class="fl">Size <span class="fv" id="szV">0.50×</span></div>
+        <input type="range" id="wmSize" min="0.2" max="4" step="0.05" value="0.5">
+        <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--t3)"><span>Small</span><span>Large</span></div>
+      </div>
+
+      <div class="f">
+        <div class="fl">Spacing <span class="fv" id="spV">0.50×</span></div>
+        <input type="range" id="spacing" min="0.2" max="4" step="0.05" value="0.5">
+        <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--t3)"><span>Dense</span><span>Spread</span></div>
+      </div>
+
+      <div class="f">
+        <div class="fl">Opacity <span class="fv" id="opV">35%</span></div>
+        <input type="range" id="opacity" min="5" max="100" value="35">
+      </div>
+
+      <div class="f">
+        <div class="fl">Angle <span class="fv" id="anV">-35°</span></div>
+        <input type="range" id="angle" min="-90" max="0" value="-35">
+      </div>
+
+      <div class="f">
+        <div class="fl">Blur <span class="fv" id="blV">0.6px</span></div>
+        <input type="range" id="blur" min="0" max="5" step="0.1" value="0.6">
+      </div>
+
+    </div>
+  </div>
+
+  <div class="acc open" id="acc-out">
+    <div class="acc-hdr" onclick="toggleAcc('acc-out')"><span class="acc-ico">⚙️</span><span class="acc-ttl">Output Settings</span><span class="acc-arr">▾</span></div>
+    <div class="acc-body">
+      <div class="f"><div class="fl">Filename suffix <span class="tag tg">editable</span></div><input type="text" id="suffix" value="_watermarked"></div>
+      <hr class="div">
+      <div class="f"><div class="fl">Format <span class="tag tg">auto</span></div>
+        <select id="outFmt"><option value="auto">Same as input</option><option value="image/jpeg">JPG</option><option value="image/png">PNG</option><option value="image/webp">WEBP</option></select>
+      </div>
+      <div class="r2">
+        <div class="f"><div class="fl">Compression</div>
+          <select id="qMode"><option value="original">Original</option><option value="quality_pct">Quality %</option><option value="custom_kb">Max KB</option><option value="custom_mb">Max MB</option></select>
+        </div>
+        <div class="f" id="qExtra" style="display:none"><div class="fl">Value</div><input type="number" id="qVal" value="85" min="1"></div>
+      </div>
+      <div class="r2">
+        <div class="f"><div class="fl">Dimensions</div>
+          <select id="dMode"><option value="original">Original</option><option value="scale_pct">Scale %</option><option value="max_w">Max Width px</option><option value="max_h">Max Height px</option></select>
+        </div>
+        <div class="f" id="dExtra" style="display:none"><div class="fl">Value</div><input type="number" id="dVal" value="1920" min="1"></div>
+      </div>
+      <hr class="div">
+      <div class="f"><div class="fl">PDF export</div>
+        <select id="pdfOut"><option value="pdf">Watermarked PDF</option><option value="images">Images (per page)</option></select>
+      </div>
+    </div>
+  </div>
+
+</div>
+<div class="sb-foot">
+  <button class="btn btn-p" id="dlBtn" disabled>⬇ Download All as ZIP</button>
+  <div id="pgBlock" style="display:none;background:var(--s2);border:1px solid var(--b2);border-radius:var(--rs);padding:10px 12px;display:none;flex-direction:column;gap:7px">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <span style="font-size:11px;font-weight:500;color:var(--t2)" id="pgLabel">Processing…</span>
+      <span style="font-size:11px;font-weight:700;color:var(--ac)" id="pgPct">0%</span>
+    </div>
+    <div style="height:4px;background:var(--s4);border-radius:2px;overflow:hidden">
+      <div id="pgBar" style="height:100%;width:0%;background:linear-gradient(90deg,var(--ac),var(--tl));border-radius:2px;transition:width .25s ease"></div>
+    </div>
+  </div>
+</div>
+</aside>
+
+<main class="main">
+  <div class="empty" id="emptyState">
+    <div class="empty-ico">✦</div>
+    <p>No files yet</p>
+    <small>Upload images or PDFs from the sidebar</small>
+  </div>
+  <div class="gallery" id="gallery" style="display:none"></div>
+</main>
+</div>
+
+<script>
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+// ── THEME
+let isLight = false;
+document.getElementById('themeBtn').addEventListener('click', () => {
+  isLight = !isLight;
+  document.body.classList.toggle('light', isLight);
+  document.getElementById('themeBtn').textContent = isLight ? '🌙 Dark' : '☀️ Light';
+});
+
+// ── ACCORDION
+function toggleAcc(id) { document.getElementById(id).classList.toggle('open'); }
+
+// ── WATERMARK SETTINGS — always read live from DOM
+function getSettings() {
+  return {
+    text:    document.getElementById('wmText').value || '© Watermark',
+    scale:   parseFloat(document.getElementById('wmSize').value),
+    spacing: parseFloat(document.getElementById('spacing').value),
+    opacity: parseFloat(document.getElementById('opacity').value) / 100,
+    angle:   parseFloat(document.getElementById('angle').value) * Math.PI / 180,
+    blur:    parseFloat(document.getElementById('blur').value),
+    color:   document.getElementById('wmColor').value,
+  };
+}
+
+// BASE sizes — defined relative to a 320px wide reference canvas
+const BASE_FONT = 28;
+const BASE_RGAP = 80;
+const BASE_CPAD = 40;
+const REF_WIDTH = 320; // preview canvas reference width
+
+// ── DRAW WATERMARK
+// canvasWidth: actual canvas width — used to scale everything proportionally
+// so a 3200px wide canvas looks IDENTICAL to a 320px preview (10× bigger, but same density)
+// skipBlur: skip for preview (faster)
+function drawWatermark(ctx, cw, ch, skipBlur, canvasWidth) {
+  const s = getSettings();
+  // Scale factor: how much bigger is this canvas vs the 320px reference
+  const sf = (canvasWidth || cw) / REF_WIDTH;
+
+  const fontSize = BASE_FONT * s.scale * sf;
+  const rowGap   = BASE_RGAP * s.spacing * sf;
+
+  ctx.save();
+  ctx.font = `700 ${fontSize}px 'DM Sans',Arial,sans-serif`;
+  ctx.textBaseline = 'middle';
+  const tw     = ctx.measureText(s.text).width;
+  const colPad = BASE_CPAD * s.scale * s.spacing * sf;
+  const colGap = tw + colPad;
+
+  ctx.globalAlpha = s.opacity;
+  if (!skipBlur && s.blur > 0) ctx.filter = `blur(${s.blur * sf}px)`;
+
+  const diag = Math.sqrt(cw * cw + ch * ch);
+  const cols  = Math.ceil(diag / colGap) + 3;
+  const rows  = Math.ceil(diag / rowGap) + 3;
+
+  ctx.translate(cw / 2, ch / 2);
+  ctx.rotate(s.angle);
+
+  for (let r = -rows; r <= rows; r++) {
+    for (let c = -cols; c <= cols; c++) {
+      const x = c * colGap;
+      const y = r * rowGap;
+      if (activeGrad) {
+        const g = ctx.createLinearGradient(x - tw/2, y, x + tw/2, y);
+        g.addColorStop(0, activeGrad[0]);
+        g.addColorStop(1, activeGrad[1]);
+        ctx.fillStyle = g;
+      } else {
+        ctx.fillStyle = s.color;
+      }
+      ctx.fillText(s.text, x - tw/2, y);
+    }
+  }
+  ctx.restore();
+}
+
+// ── PREVIEW ARCHITECTURE
+// Each image entry stores a small offscreen "base" canvas (image only, no watermark).
+// On every slider move we only redraw the watermark layer on top of a copy.
+// This means NO image decoding/scaling per slider event — just fast canvas drawing.
+
+function makeBaseCanvas(img, maxW) {
+  const scale = Math.min(1, maxW / img.naturalWidth);
+  const w = Math.round(img.naturalWidth  * scale);
+  const h = Math.round(img.naturalHeight * scale);
+  const c = document.createElement('canvas');
+  c.width = w; c.height = h;
+  c.getContext('2d').drawImage(img, 0, 0, w, h);
+  return c;
+}
+
+function applyWatermarkToBase(baseCanvas, skipBlur) {
+  const c = document.createElement('canvas');
+  c.width  = baseCanvas.width;
+  c.height = baseCanvas.height;
+  const ctx = c.getContext('2d');
+  ctx.drawImage(baseCanvas, 0, 0);
+  // Always pass REF_WIDTH as canvasWidth for preview — this is the reference
+  drawWatermark(ctx, c.width, c.height, skipBlur, REF_WIDTH);
+  return c;
+}
+
+// ── COLOR PALETTE
+const PALETTE = [
+  {t:'solid',v:'#4b4b4b',l:'Default Grey'},
+  {t:'solid',v:'#ffffff',l:'White'},
+  {t:'solid',v:'#111111',l:'Black'},
+  {t:'solid',v:'#7c6aff',l:'Violet'},
+  {t:'solid',v:'#2dd4bf',l:'Teal'},
+  {t:'solid',v:'#f472b6',l:'Pink'},
+  {t:'solid',v:'#fbbf24',l:'Amber'},
+  {t:'solid',v:'#4ade80',l:'Green'},
+  {t:'grad',v:['#7c6aff','#2dd4bf'],l:'Aurora'},
+  {t:'grad',v:['#f472b6','#fbbf24'],l:'Sunset'},
+  {t:'grad',v:['#38bdf8','#818cf8'],l:'Sky'},
+  {t:'grad',v:['#fb7185','#f43f5e'],l:'Rose'},
+  {t:'grad',v:['#34d399','#7c6aff'],l:'Emerald'},
+];
+let activeGrad = null;
+
+function setColor(i) {
+  document.querySelectorAll('.csw').forEach(s => s.classList.remove('active'));
+  document.getElementById('cg').children[i].classList.add('active');
+  const c = PALETTE[i];
+  if (c.t === 'grad') {
+    activeGrad = c.v;
+    document.getElementById('cprev').style.background = `linear-gradient(135deg,${c.v[0]},${c.v[1]})`;
+  } else {
+    activeGrad = null;
+    document.getElementById('wmColor').value = c.v;
+    document.getElementById('cprev').style.background = c.v;
+  }
+  renderAll();
+}
+
+const cgEl = document.getElementById('cg');
+PALETTE.forEach((c, i) => {
+  const el = document.createElement('div');
+  el.className = 'csw' + (i === 0 ? ' active' : '');
+  el.title = c.l;
+  el.style.background = c.t === 'grad' ? `linear-gradient(135deg,${c.v[0]},${c.v[1]})` : c.v;
+  if (c.v === '#ffffff') el.style.border = '2px solid rgba(0,0,0,0.15)';
+  el.addEventListener('click', () => setColor(i));
+  cgEl.appendChild(el);
+});
+
+document.getElementById('wmColor').addEventListener('input', e => {
+  document.getElementById('cprev').style.background = e.target.value;
+  activeGrad = null;
+  document.querySelectorAll('.csw').forEach(s => s.classList.remove('active'));
+  renderAll();
+});
+
+// ── SLIDER READOUTS + INSTANT RENDER
+const sliderCfg = [
+  ['wmSize',  v => (+v).toFixed(2)+'×', 'szV'],
+  ['spacing', v => (+v).toFixed(2)+'×', 'spV'],
+  ['opacity', v => v+'%',               'opV'],
+  ['angle',   v => v+'°',               'anV'],
+  ['blur',    v => (+v).toFixed(1)+'px','blV'],
+];
+sliderCfg.forEach(([id, fmt, out]) => {
+  document.getElementById(id).addEventListener('input', () => {
+    document.getElementById(out).textContent = fmt(document.getElementById(id).value);
+    renderAll(); // instant, no debounce
+  });
+});
+document.getElementById('wmText').addEventListener('input', renderAll);
+
+// ── renderAll — fast because base canvas is pre-stored
+function renderAll() {
+  document.querySelectorAll('.card[data-id]').forEach(card => {
+    const entry = files.find(f => String(f.id) === card.dataset.id);
+    if (!entry || entry.type === 'pdf' || !entry.baseCanvas) return;
+    const nc = applyWatermarkToBase(entry.baseCanvas, true); // skipBlur for preview
+    nc.style.cssText = 'width:100%;display:block;height:auto';
+    const old = card.querySelector('canvas');
+    if (old) card.replaceChild(nc, old);
+  });
+}
+
+// ── OUTPUT HANDLERS
+document.getElementById('qMode').addEventListener('change', function() {
+  document.getElementById('qExtra').style.display = this.value === 'original' ? 'none' : '';
+  const m = {quality_pct:85, custom_kb:500, custom_mb:2};
+  if (m[this.value] !== undefined) document.getElementById('qVal').value = m[this.value];
+});
+document.getElementById('dMode').addEventListener('change', function() {
+  document.getElementById('dExtra').style.display = this.value === 'original' ? 'none' : '';
+  document.getElementById('dVal').value = this.value === 'scale_pct' ? 75 : 1920;
+});
+
+// ── FILES
+let files = [];
+
+const dz = document.getElementById('dz'), fi = document.getElementById('fi');
+dz.addEventListener('dragover',  e => { e.preventDefault(); dz.classList.add('over'); });
+dz.addEventListener('dragleave', () => dz.classList.remove('over'));
+dz.addEventListener('drop', e => { e.preventDefault(); dz.classList.remove('over'); handleFiles(e.dataTransfer.files, false); });
+fi.addEventListener('change', () => { handleFiles(fi.files, false); fi.value = ''; });
+
+document.getElementById('folderBtn').addEventListener('click', () => document.getElementById('folderInput').click());
+document.getElementById('folderInput').addEventListener('change', function() {
+  const all = Array.from(this.files).filter(f => {
+    const n = f.name.toLowerCase();
+    return f.type.startsWith('image/') || f.type === 'application/pdf' || n.endsWith('.heic') || n.endsWith('.heif');
+  });
+  if (!all.length) return;
+  const root = all[0].webkitRelativePath.split('/')[0];
+  const folders = new Set(all.map(f => f.webkitRelativePath.split('/').slice(0,-1).join('/')));
+  const info = document.getElementById('folderInfo');
+  info.style.display = '';
+  info.textContent = `📁 "${root}" — ${all.length} files across ${folders.size} folder(s)`;
+  handleFiles(all, true);
+  this.value = '';
+});
+
+async function handleFiles(list, useRel) {
+  for (const f of Array.from(list)) {
+    const n = f.name.toLowerCase();
+    const rel = useRel ? f.webkitRelativePath : null;
+    try {
+      if (f.type === 'application/pdf') await loadPDF(f, rel);
+      else await loadImage(f, rel);
+    } catch(e) { toast('⚠ Cannot load: ' + f.name); }
+  }
+  updateUI();
+}
+
+function loadImage(file, rel) {
+  return new Promise((res, rej) => {
+    const reader = new FileReader();
+    reader.onerror = rej;
+    reader.onload = e => {
+      const img = new Image();
+      img.onerror = rej;
+      img.onload = () => {
+        const id = Date.now() + Math.random();
+        // Store the small base canvas — this is the key to fast rendering
+        const baseCanvas = makeBaseCanvas(img, 320);
+        const mimeType = file.type && file.type !== '' ? file.type : 'image/jpeg';
+        const entry = { id, name: file.name, type: 'image', img, baseCanvas, mimeType, relativePath: rel };
+        files.push(entry);
+        // Build initial preview
+        const preview = applyWatermarkToBase(baseCanvas, true);
+        buildCard(entry, preview, null);
+        res();
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+async function loadPDF(file, rel) {
+  const ab = await file.arrayBuffer();
+  const id = Date.now() + Math.random();
+  const entry = { id, name: file.name, type: 'pdf', pdfBytes: ab, mimeType: 'application/pdf', relativePath: rel };
+  files.push(entry);
+  // Build PDF preview
+  const pdf = await pdfjsLib.getDocument({ data: ab.slice(0) }).promise;
+  const page = await pdf.getPage(1);
+  const vp = page.getViewport({ scale: 1 });
+  const sc = Math.min(300 / vp.width, 220 / vp.height);
+  const viewport = page.getViewport({ scale: sc });
+  const c = document.createElement('canvas');
+  c.width = viewport.width; c.height = viewport.height;
+  await page.render({ canvasContext: c.getContext('2d'), viewport }).promise;
+  drawWatermark(c.getContext('2d'), c.width, c.height, true, REF_WIDTH);
+  buildCard(entry, c, pdf.numPages + ' pages');
+}
+
+function buildCard(entry, canvas, extra) {
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.dataset.id = String(entry.id);
+  canvas.style.cssText = 'width:100%;display:block;height:auto';
+  const foot = document.createElement('div'); foot.className = 'card-foot';
+  const nm   = document.createElement('div'); nm.className = 'cn'; nm.title = entry.name; nm.textContent = entry.name;
+  const badge = document.createElement('div'); badge.className = 'cb';
+  badge.textContent = extra || (entry.mimeType.split('/')[1] || 'FILE').toUpperCase();
+  const rm = document.createElement('button'); rm.className = 'crm'; rm.textContent = '✕';
+  rm.addEventListener('click', e => {
+    e.stopPropagation();
+    files = files.filter(f => f.id !== entry.id);
+    card.style.transition = 'opacity .18s,transform .18s';
+    card.style.opacity = '0'; card.style.transform = 'scale(.9)';
+    setTimeout(() => card.remove(), 180);
+    updateUI();
+  });
+  foot.append(nm, badge, rm);
+  card.append(canvas, foot);
+  document.getElementById('gallery').appendChild(card);
+}
+
+function updateUI() {
+  const n = files.length;
+  document.getElementById('counter').textContent = n + ' file' + (n !== 1 ? 's' : '');
+  document.getElementById('emptyState').style.display = n ? 'none' : '';
+  document.getElementById('gallery').style.display = n ? 'grid' : 'none';
+  document.getElementById('dlBtn').disabled = n === 0;
+}
+
+// ── DEFAULTS
+const DEF = { wmText:'© Sample by ADIB via Fiverr', wmSize:0.5, spacing:0.5, opacity:35, angle:-35, blur:0.6, colorIdx:0 };
+
+document.getElementById('clearBtn').addEventListener('click', () => {
+  files = [];
+  document.getElementById('gallery').innerHTML = '';
+  document.getElementById('folderInfo').style.display = 'none';
+  updateUI(); toast('✓ All files cleared');
+});
+
+document.getElementById('resetBtn').addEventListener('click', () => {
+  document.getElementById('wmText').value   = DEF.wmText;
+  document.getElementById('wmSize').value   = DEF.wmSize;   document.getElementById('szV').textContent = '0.50×';
+  document.getElementById('spacing').value  = DEF.spacing;  document.getElementById('spV').textContent = '0.50×';
+  document.getElementById('opacity').value  = DEF.opacity;  document.getElementById('opV').textContent = DEF.opacity + '%';
+  document.getElementById('angle').value    = DEF.angle;    document.getElementById('anV').textContent = DEF.angle + '°';
+  document.getElementById('blur').value     = DEF.blur;     document.getElementById('blV').textContent = DEF.blur + 'px';
+  setColor(DEF.colorIdx);
+  renderAll(); toast('↺ Settings reset');
+});
+
+// ── DOWNLOAD HELPERS
+function getDims(entry) {
+  const mode = document.getElementById('dMode').value;
+  const val  = parseFloat(document.getElementById('dVal').value) || 1920;
+  let w = entry.img.naturalWidth, h = entry.img.naturalHeight;
+  if (mode === 'scale_pct') { const s = val/100; w = Math.round(w*s); h = Math.round(h*s); }
+  else if (mode === 'max_w' && w > val) { const r = val/w; w = Math.round(w*r); h = Math.round(h*r); }
+  else if (mode === 'max_h' && h > val) { const r = val/h; w = Math.round(w*r); h = Math.round(h*r); }
+  return { w, h };
+}
+function getMime(entry) { const s = document.getElementById('outFmt').value; return s === 'auto' ? entry.mimeType : s; }
+function getExt(m) { return {'image/jpeg':'jpg','image/png':'png','image/webp':'webp','image/gif':'gif'}[m] || 'jpg'; }
+
+async function toBlob(canvas, mime) {
+  const mode = document.getElementById('qMode').value;
+  const val  = parseFloat(document.getElementById('qVal').value) || 85;
+  if (mode === 'quality_pct') return new Promise(r => canvas.toBlob(r, mime, val/100));
+  if (mode === 'custom_kb' || mode === 'custom_mb') {
+    const max = mode === 'custom_mb' ? val*1024*1024 : val*1024;
+    const om  = mime === 'image/png' ? 'image/jpeg' : mime;
+    for (let q = 0.95; q >= 0.1; q -= 0.05) {
+      const b = await new Promise(r => canvas.toBlob(r, om, q));
+      if (b.size <= max || q < 0.15) return b;
+    }
+  }
+  const q = (mime.includes('jpeg') || mime.includes('webp')) ? 0.95 : undefined;
+  return new Promise(r => canvas.toBlob(r, mime, q));
+}
+
+function yieldMain() { return new Promise(r => setTimeout(r, 0)); }
+
+async function processPDF(entry, zip, suffix) {
+  const pdf = await pdfjsLib.getDocument({ data: entry.pdfBytes.slice(0) }).promise;
+  const pdfOut = document.getElementById('pdfOut').value;
+  const base = entry.name.replace(/\.[^.]+$/, '');
+  const relBase = entry.relativePath ? entry.relativePath.replace(/\.[^.]+$/, '') : base;
+  if (pdfOut === 'images') {
+    for (let p = 1; p <= pdf.numPages; p++) {
+      const page = await pdf.getPage(p);
+      const viewport = page.getViewport({ scale: 2 });
+      const c = document.createElement('canvas'); c.width = viewport.width; c.height = viewport.height;
+      await page.render({ canvasContext: c.getContext('2d'), viewport }).promise;
+      drawWatermark(c.getContext('2d'), c.width, c.height, false, c.width);
+      const blob = await new Promise(r => c.toBlob(r, 'image/jpeg', 0.92));
+      c.width = 0; c.height = 0;
+      zip.file(`${relBase}${suffix}_p${p}.jpg`, blob);
+      await yieldMain();
+    }
+  } else {
+    const { jsPDF } = window.jspdf; let doc = null;
+    for (let p = 1; p <= pdf.numPages; p++) {
+      const page = await pdf.getPage(p);
+      const viewport = page.getViewport({ scale: 2 });
+      const c = document.createElement('canvas'); c.width = viewport.width; c.height = viewport.height;
+      await page.render({ canvasContext: c.getContext('2d'), viewport }).promise;
+      drawWatermark(c.getContext('2d'), c.width, c.height, false, c.width);
+      const imgData = c.toDataURL('image/jpeg', 0.92);
+      c.width = 0; c.height = 0;
+      const mw = viewport.width * 0.264583, mh = viewport.height * 0.264583;
+      if (!doc) doc = new jsPDF({ orientation: mw > mh ? 'l' : 'p', unit: 'mm', format: [mw, mh] });
+      else doc.addPage([mw, mh], mw > mh ? 'l' : 'p');
+      doc.addImage(imgData, 'JPEG', 0, 0, mw, mh);
+      await yieldMain();
+    }
+    if (doc) zip.file(`${relBase}${suffix}.pdf`, doc.output('blob'));
+  }
+}
+
+function dtStamp() {
+  const n = new Date(), p = x => String(x).padStart(2, '0');
+  return `${n.getFullYear()}${p(n.getMonth()+1)}${p(n.getDate())}_${p(n.getHours())}${p(n.getMinutes())}${p(n.getSeconds())}`;
+}
+
+// ── DOWNLOAD — processes one file at a time, yields between each
+document.getElementById('dlBtn').addEventListener('click', async () => {
+  if (!files.length) return;
+  const btn    = document.getElementById('dlBtn');
+  const pgBlock = document.getElementById('pgBlock');
+  const pgBar   = document.getElementById('pgBar');
+  const pgLabel = document.getElementById('pgLabel');
+  const pgPct   = document.getElementById('pgPct');
+  const total   = files.length;
+
+  btn.disabled = true;
+  pgBlock.style.display = 'flex';
+  pgBar.style.width = '0%';
+  pgLabel.textContent = `Processing 0 / ${total}`;
+  pgPct.textContent = '0%';
+
+  const zip    = new JSZip();
+  const suffix = document.getElementById('suffix').value || '_watermarked';
+
+  for (let i = 0; i < total; i++) {
+    const entry = files[i];
+    await yieldMain();
+
+    try {
+      if (entry.type === 'pdf') {
+        await processPDF(entry, zip, suffix);
+      } else {
+        const { w, h } = getDims(entry);
+        const c = document.createElement('canvas'); c.width = w; c.height = h;
+        const ctx = c.getContext('2d');
+        ctx.drawImage(entry.img, 0, 0, w, h);
+        await yieldMain();
+        // Pass w as canvasWidth — drawWatermark scales everything by w/REF_WIDTH
+        // so the visual density exactly matches the 320px preview
+        drawWatermark(ctx, w, h, false, w);
+        await yieldMain();
+        const mime = getMime(entry);
+        const blob = await toBlob(c, mime);
+        c.width = 0; c.height = 0;
+        const base = entry.name.replace(/\.[^.]+$/, '');
+        const zipPath = entry.relativePath
+          ? entry.relativePath.replace(/\.[^.]+$/, '') + suffix + '.' + getExt(mime)
+          : base + suffix + '.' + getExt(mime);
+        zip.file(zipPath, blob);
+      }
+    } catch(err) {
+      console.error('Download error:', entry.name, err);
+      toast('⚠ Skipped: ' + entry.name);
+    }
+
+    const done = i + 1;
+    const pct  = Math.round(done / total * 82);
+    pgBar.style.width   = pct + '%';
+    pgLabel.textContent = `Processing ${done} / ${total}`;
+    pgPct.textContent   = `(${Math.round(done / total * 100)}%)`;
+    await yieldMain();
+  }
+
+  pgLabel.textContent = `Zipping ${total} file${total !== 1 ? 's' : ''}…`;
+  pgPct.textContent   = '';
+  pgBar.style.width   = '90%';
+
+  const zb = await zip.generateAsync(
+    { type: 'blob', compression: 'DEFLATE', compressionOptions: { level: 3 } },
+    m => {
+      pgBar.style.width = (90 + m.percent * 0.1) + '%';
+      pgPct.textContent = `(${Math.round(90 + m.percent * 0.1)}%)`;
+    }
+  );
+
+  const url = URL.createObjectURL(zb);
+  const a = document.createElement('a'); a.href = url; a.download = `watermarked_${dtStamp()}.zip`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 5000);
+
+  pgBar.style.width   = '100%';
+  pgLabel.textContent = `✓ Done — ${total} file${total !== 1 ? 's' : ''} ready`;
+  pgPct.textContent   = '(100%)';
+  setTimeout(() => { pgBlock.style.display = 'none'; pgBar.style.width = '0%'; }, 2500);
+  btn.disabled = false;
+  toast('✓ Download started!');
+});
+
+function toast(msg) {
+  const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg;
+  document.body.appendChild(t); setTimeout(() => t.remove(), 3200);
+}
+
+updateUI();
+</script>
+</body>
+</html>
